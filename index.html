@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particles Cursor</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #061161, #780206);
+            cursor: none;
+        }
+
+        .trail-circle {
+            position: fixed;
+            background: linear-gradient(to right, #ff0000, #fff200, #1e9600);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            transform: scale(0);
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+    
+    <canvas id="particlecanvas"></canvas>
+
+
+    <script>
+        const trailContainer = document.body;
+        const numCircles = 30;
+        const circles = [];
+
+        for(let i = 0; i < numCircles; i++) {
+            const circle = document.createElement('div');
+            circle.className ='trail-circle';
+            circle.style.zIndex = -i;
+            circles.push(circle);
+            trailContainer.appendChild(circle);
+        }
+
+        let mouse = {x: 0, y: 0};
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        function animationCircles () {
+            let lastX = mouse.x;
+            let lastY = mouse.y;
+
+            for(let i = 0; i < circles.length; i++) {
+                const circle = circles[i];
+                const targetX  = (i === 0 ? mouse.x : circles[i - 1].x);
+                const targetY  = (i === 0 ? mouse.y : circles[i - 1].y);
+
+                const dx = targetX - circle.x;
+                const dy = targetY - circle.y;
+                circle.x += dx * 0.1;
+                circle.y += dy * 0.1;
+                
+                const size = 25 - i * 0.5;
+                circle.style.width = `${size}px`;
+                circle.style.height = `${size}px`;
+                circle.style.left = `${circle.x}px`;
+                circle.style.top = `${circle.y}px`;
+                circle.style.transform = `translate(-50%, -50%) scale(1)`;
+                circle.style.opacity = 1;
+            }
+
+            requestAnimationFrame(animationCircles);
+        };
+
+        // Initialize circle positions 
+        for(const circle of circles) {
+            circle.x = mouse.x;
+            circle.y = mouse.y;
+        };
+        animationCircles();
+    </script>
+
+</body>
+</html>
